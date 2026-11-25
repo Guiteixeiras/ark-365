@@ -1,0 +1,17 @@
+# segredos e coisas deste computador: nunca vão pro repositório
+android/chave/
+ferramentas/local.json
+*.p12
+*.jks
+*.keystore
+senha*.txt
+
+# gerados
+android/saida/
+*.apk
+*.idsig
+
+# backups e dados pessoais
+*.d365
+*.zip
+backup*.json

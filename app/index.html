@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.anthropic.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#6324d6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#5a22c0" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Desafio 365">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<title>Desafio 365</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icones/icone-32.png">
+<link rel="apple-touch-icon" href="icones/apple-touch-icon.png">
+<link rel="preload" href="fontes/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="estilo.css">
+<script src="banco.js" defer></script>
+<script src="nativo.js" defer></script>
+<script src="plataforma.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body class="carregando">
+<header class="band top">
+  <div class="in">
+    <div class="head">
+      <div><h1>Desafio 365</h1><p id="range">Um quadradinho por dia. Pinta o ano.</p></div>
+      <div class="big" id="dayN">Dia –</div>
+    </div>
+    <div class="prog"><i id="progBar" style="width:0"></i></div>
+    <div class="stats" id="stats"></div>
+    <div class="porque" id="porque">
+      <span class="pl">Meu porquê</span>
+      <p id="whyTx"></p>
+      <button class="pe" id="whyEdit">Editar</button>
+      <p class="focus" id="focusTx"></p>
+      <div id="whyBox" hidden><label for="whyIn" class="sr">Meu porquê</label><textarea id="whyIn" placeholder="Por que você começou isso? O motivo forte que vai te fazer voltar nos dias sem vontade."></textarea><button class="btn" id="whySave">Salvar</button></div>
+    </div>
+    <div id="boas">
+      <label for="startIn">Dia 1 do seu desafio</label>
+      <input type="date" id="startIn">
+      <button class="btn" id="beginBtn">Começar meu desafio</button>
+      <button class="btn ghost" id="jaTenho" aria-expanded="false">Já tenho um backup</button>
+      <button class="btn ghost" id="recup" hidden></button>
+      <div class="set" id="boasImp" hidden></div>
+      <button class="lnk" id="verEx">Ver um exemplo antes</button>
+    </div>
+    <div class="demo" id="demo"><p><strong>Isso é um exemplo.</strong> Nada aqui é seu e nada é salvo.</p><button class="btn" id="sairEx">Começar o meu</button></div>
+    <p class="aviso" id="semBanco">Não consegui abrir o armazenamento deste navegador, então nada seria salvo. Se for uma janela anônima, abre numa janela normal. Se já estava usando, fecha e abre o app de novo.</p>
+    <nav class="tabs" id="tabs">
+      <a href="#diario" data-t="diario">Diário</a>
+      <a href="#treino" data-t="treino">Treino</a>
+      <a href="#relatorios" data-t="relatorios">Relatórios</a>
+      <a href="#metas" data-t="metas">Metas</a>
+      <a href="#memorias" data-t="memorias">Memórias</a>
+    </nav>
+  </div>
+</header>
+
+<div class="view" id="v-diario">
+<main class="band">
+  <div class="in main">
+    <section>
+      <div id="revArea"></div>
+      <h2>Seu ano</h2>
+      <p class="sub">Toca num dia pra ver ou registrar. A cor é a nota do dia; o pontinho é dia de <span id="hab0">Academia</span>.</p>
+      <div class="months" id="months"></div>
+      <div class="legend">
+        <span><i class="r1"></i>Péssimo</span><span><i class="r2"></i>Ruim</span><span><i class="r3"></i>Ok</span><span><i class="r4"></i>Bom</span><span><i class="r5"></i>Ótimo</span><span><i style="background:var(--none)"></i>Sem registro</span>
+      </div>
+    </section>
+
+    <aside class="ed" id="ed" aria-label="Registro do dia">
+      <p class="lock" id="lock">É só um exemplo, por isso está travado. Toca em Começar o meu.</p>
+      <div class="nav">
+        <button class="arrow" id="prev" aria-label="Dia anterior">‹</button>
+        <div><h2 id="edDate">–</h2><p id="edDay"></p></div>
+        <button class="arrow" id="next" aria-label="Próximo dia">›</button>
+      </div>
+      <fieldset id="fs">
+        <span class="lab">Como foi o dia?</span>
+        <div class="rate" id="rate"></div>
+        <span class="lab">Como me senti</span>
+        <div class="chips feel" id="feel"></div>
+        <span class="lab">Fiz hoje</span>
+        <div class="chips" id="habits"></div>
+        <label class="lab" for="goodIn">Coisas boas</label>
+        <div class="add addg"><input id="goodIn" placeholder="Ex.: treino de perna completo" autocomplete="off"><button id="goodAdd" aria-label="Adicionar coisa boa">+</button></div>
+        <ul class="items" id="good"></ul>
+        <label class="lab" for="badIn">Coisas ruins</label>
+        <div class="add addb"><input id="badIn" placeholder="Ex.: fiquei até 3h no celular" autocomplete="off"><button id="badAdd" aria-label="Adicionar coisa ruim">+</button></div>
+        <ul class="items bad" id="bad"></ul>
+        <label class="lab" for="best">Melhor momento do dia</label>
+        <input class="fld" id="best" placeholder="Uma coisa que fez o dia valer" autocomplete="off">
+        <div id="phWrap"><span class="lab">Fotos</span><div class="photos" id="photos"></div><input type="file" id="phIn" accept="image/*" multiple hidden></div>
+        <div class="qa"><div class="qh"><label class="lab" id="qTx" for="qAns" style="margin:0"></label><button class="x" id="qNext" aria-label="Trocar pergunta" title="Trocar pergunta">↻</button></div><textarea class="fld" id="qAns" placeholder="Responde do seu jeito"></textarea></div>
+        <div class="nums"><label>Sono<span><input type="number" id="sleep" min="0" max="24" step="0.5" inputmode="decimal" placeholder="7,5">horas</span></label><label>Peso<span><input type="number" id="kg" min="20" max="400" step="0.1" inputmode="decimal" placeholder="opcional">kg</span></label></div>
+        <label class="lab" for="helped">O que me ajudou</label>
+        <textarea class="fld" id="helped" placeholder="Algo que fez diferença hoje"></textarea>
+        <label class="lab" for="disliked">O que não curti</label>
+        <textarea class="fld" id="disliked" placeholder="Algo que não quero repetir"></textarea>
+        <label class="lab" for="note">Anotação livre</label>
+        <textarea class="fld" id="note"></textarea>
+        <button class="star" id="star" aria-pressed="false">Marcar como dia marcante</button>
+      </fieldset>
+      <div class="status" id="status" aria-live="polite"></div>
+    </aside>
+  </div>
+</main>
+
+<section class="band" style="padding-top:0">
+  <div class="in two">
+    <div>
+      <h2>Mês a mês</h2>
+      <p class="sub">Coisas ruins à esquerda, boas à direita. Dá pra ver pra que lado o mês pendeu.</p>
+      <div class="bal" id="bal"></div>
+    </div>
+    <div>
+      <h2>Olhando pra trás</h2>
+      <label for="find" class="sub" style="display:block;margin-bottom:8px">Busca em tudo que você escreveu</label>
+      <input class="find" id="find" type="search" placeholder="Ex.: celular, treino, dormi">
+      <div class="feed" id="feed"></div>
+      <button class="btn ghost more" id="moreBtn" hidden>Ver mais dias</button>
+      <details class="set" id="ajustes">
+        <summary>Ajustes e backup</summary>
+        <div class="row"><label for="startEdit">Dia 1 do desafio</label><input type="date" id="startEdit" style="flex:0 1 200px"><button class="btn ghost" id="startSave">Salvar</button></div>
+        <p class="sub" style="margin:14px 0 6px">Coisas pra marcar todo dia (a primeira vira o pontinho no calendário)</p>
+        <div class="chips" id="habEdit"></div>
+        <div class="row add"><label for="habIn" class="sr">Novo hábito</label><input id="habIn" placeholder="Ex.: Beber 2L de água, Desenhar, Ler"><button class="btn" id="habAdd" style="width:auto">Adicionar</button></div>
+        <div id="instBox">
+          <p class="sh">Instalar no celular</p>
+          <p class="sub p" id="instTx"></p>
+          <div class="row"><button class="btn ghost" id="instBtn" hidden>Instalar o app</button></div>
+        </div>
+        <div id="travaBox" hidden>
+          <p class="sh">Privacidade</p>
+          <div class="row"><label class="ck"><input type="checkbox" id="travaOn">Pedir digital ou PIN pra abrir</label></div>
+          <p class="sub p" id="travaTx"></p>
+        </div>
+        <p class="sh">Lembrete diário</p>
+        <div class="row"><label class="ck"><input type="checkbox" id="lemOn">Me lembrar às</label><input type="time" id="lemH" value="21:00" aria-label="Horário do lembrete"><button class="btn ghost" id="lemIcs">Pôr no calendário</button></div>
+        <p class="sub p" id="lemTx" aria-live="polite"></p>
+        <div class="row" id="lemXi" hidden><button class="btn ghost" id="lemIni">Início automático</button><button class="btn ghost" id="lemBat">Bateria</button></div>
+        <div id="iaCfg">
+        <p class="sh">Análise com IA (opcional)</p>
+        <p class="sub p">Usa a API do Claude com a sua chave, que fica só neste aparelho e não entra no backup. Cada análise é cobrada na sua conta da Anthropic.</p>
+        <div class="row"><label for="iaKey" class="sr">Chave da API da Anthropic</label><input type="password" id="iaKey" placeholder="Cole a chave (sk-ant-...)" autocomplete="off" spellcheck="false" style="flex:1 1 220px"><button class="btn ghost" id="iaSave">Salvar chave</button><button class="btn ghost" id="iaDel" hidden>Remover</button></div>
+        <div class="row"><label for="iaModel">Modelo</label><select id="iaModel"></select></div>
+        </div>
+        <div id="bkBox">
+        <p class="sub p soBoas" style="margin-top:10px">Tem o arquivo do backup?</p>
+        <p class="sh soExp">Backup</p>
+        <p class="sub p soExp">Seus dados existem só neste aparelho. Guarda uma cópia de vez em quando. O arquivo leva tudo, com as fotos; o texto leva tudo menos as fotos.</p>
+        <div class="row"><label for="bkSenha" class="sr">Senha do backup</label><input type="password" id="bkSenha" placeholder="Senha do arquivo, se tiver" autocomplete="off" style="flex:1 1 240px"></div>
+        <p class="sub p soExp">Com senha, o arquivo só abre com ela. Se esquecer, não tem como recuperar. O texto não leva senha.</p>
+        <div class="row"><button class="btn soExp" id="zipBtn">Baixar backup com fotos</button><button class="btn ghost" id="arqBtn">Importar arquivo</button><input type="file" id="arqIn" accept=".zip,.json,.txt,.d365,application/zip,application/json,application/octet-stream,text/plain" hidden></div>
+        <p class="sub p soExp" style="margin-top:10px">Ou por texto: copia e guarda onde quiser. Pra restaurar, cola no campo e toca em Importar texto.</p>
+        <p class="sub p soBoas">Copiou o backup como texto? Cola aqui:</p>
+        <label for="impTx" class="sr">Backup</label>
+        <textarea id="impTx" placeholder="Cole o texto do backup aqui"></textarea>
+        <div class="row"><button class="btn ghost soExp" id="copyBtn">Copiar backup</button><button class="btn ghost" id="impBtn">Importar texto</button></div>
+        <p class="sub p" id="bkTx" aria-live="polite"></p>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="view" id="v-treino">
+<section class="band">
+  <div class="in gymgrid">
+    <div>
+      <div class="nav" style="justify-content:flex-start">
+        <button class="arrow" id="tPrev" aria-label="Dia anterior">‹</button>
+        <div style="text-align:left;flex:1"><h2 id="tDate" style="margin:0">Hoje</h2><p id="tSub"></p></div>
+        <button class="arrow" id="tNext" aria-label="Próximo dia">›</button>
+      </div>
+      <p class="lock" id="tLock">É só um exemplo, por isso está travado. Toca em Começar o meu.</p>
+      <fieldset id="tfs"><div id="wk"></div></fieldset>
+      <datalist id="exList"></datalist>
+    </div>
+    <div>
+      <h2>Esta semana</h2>
+      <p class="sub" id="wkSub"></p>
+      <div id="mus"></div>
+      <h2 style="margin-top:36px">Seus recordes</h2>
+      <p class="sub">Toca num exercício pra ver a evolução e o histórico.</p>
+      <div class="kgw" id="exw" style="height:190px"><svg id="exSvg" aria-label="Evolução do exercício"></svg></div>
+      <p class="sub" id="exSub" style="margin-top:6px"></p>
+      <ul class="hist" id="exHistL"></ul>
+      <div class="scroll" style="margin-top:18px"><table class="prs" id="prs"></table></div>
+      <h2 style="margin-top:36px">Volume por semana</h2>
+      <p class="sub">Soma de carga × repetições (sem aquecimento), últimas 8 semanas.</p>
+      <div class="vol" id="vol"></div><div class="volx" id="volx"></div>
+      <h2 style="margin-top:36px">Rotinas</h2>
+      <p class="sub">Seus treinos prontos, com meta de séries e repetições.</p>
+      <div id="rts"></div>
+      <button class="btn ghost" id="rtNew">+ Nova rotina</button>
+    </div>
+  </div>
+</section>
+</div>
+<div class="restbar" id="restBar" hidden role="timer" aria-live="off"><span>Descanso</span><b id="restT">1:30</b><button data-rb="-15">−15s</button><button data-rb="15">+15s</button><button data-rb="skip">Pular</button><i id="restP"></i></div>
+
+<div class="view" id="v-relatorios">
+<section class="band">
+  <div class="in">
+    <div class="rhead">
+      <div><h2 id="repTitle">Relatório</h2><p class="sub" style="margin:0" id="repSub"></p></div>
+      <div class="chips chipsel" id="perSel" role="group" aria-label="Período">
+        <button class="chip" data-p="7">7 dias</button><button class="chip" data-p="30">30 dias</button><button class="chip" data-p="all">Desafio todo</button>
+      </div>
+    </div>
+    <div class="figs" id="figs"></div>
+    <div class="cols" id="cols" aria-label="Nota de cada dia do período"></div>
+    <div class="axis" id="axis"></div>
+
+    <div class="grid2">
+      <div>
+        <h2>Recomendações</h2>
+        <p class="sub">Calculadas aqui mesmo, a partir dos seus registros e metas. Nada sai do app.</p>
+        <div class="recs" id="recs"></div>
+      </div>
+      <div class="ai" id="aiBox">
+        <h2>Análise com IA</h2>
+        <p class="sub" id="aiSub">Opcional. Com uma chave da API, roda num toque: manda pro Claude os registros do período escolhido e suas metas, e volta com uma leitura e sugestões. Sem chave, dá pra fazer de graça: copia o pedido, cola numa conversa com o Claude e traz a resposta. Fotos e cartas nunca vão. A última análise fica salva aqui.</p>
+        <label for="aiFocus" class="sr">Foco da análise</label>
+        <input class="fld" id="aiFocus" placeholder="Quer foco em algo? Ex.: sono, treino, ansiedade (opcional)">
+        <div class="aib"><button class="btn" id="aiBtn">Pedir análise</button><button class="btn lk" id="aiCopy">Copiar pedido</button><button class="btn lk" id="aiPaste" hidden>Colar resposta</button></div>
+        <label for="aiIn" class="sr">Resposta do Claude</label>
+        <textarea class="fld" id="aiIn" placeholder="Cola aqui a resposta do Claude" hidden></textarea>
+        <div id="aiOut" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div><h2>O que te move</h2><p class="sub">Os porquês das suas coisas boas.</p><div id="motG"></div><div class="recs" id="whyG" style="margin-top:16px"></div></div>
+      <div><h2>O que te puxa pra baixo</h2><p class="sub">Os porquês das suas coisas ruins.</p><div id="motB"></div><div class="recs" id="whyB" style="margin-top:16px"></div></div>
+    </div>
+    <div class="grid2">
+      <div><h2>Como você se sentiu</h2><p class="sub">Os sentimentos que mais apareceram.</p><div id="feelRep"></div></div>
+      <div><h2>Sono e peso</h2><p class="sub" id="sleepSub"></p><div id="sleepRep"></div><div class="kgw" id="kgw"><svg id="kgSvg" aria-label="Peso no período"></svg></div><p class="sub" id="kgSub" style="margin-top:6px"></p></div>
+    </div>
+    <div class="grid2">
+      <div><h2>Por dia da semana</h2><p class="sub">Nota média em cada dia.</p><div id="wd"></div></div>
+      <div><h2>Hábitos</h2><p class="sub">Em quantos dias registrados você fez, e como ficou a nota com e sem.</p><div id="habRep"></div></div>
+    </div>
+    <div class="grid2">
+      <div><h2>O que mais se repetiu de bom</h2><div id="topGood"></div></div>
+      <div><h2>O que mais se repetiu de ruim</h2><div id="topBad"></div></div>
+    </div>
+    <div class="grid2">
+      <div><h2>O que te ajudou</h2><p class="sub">Dos seus dias com nota Bom ou Ótimo.</p><div class="recs" id="helps"></div></div>
+      <div><h2>O que você não curtiu</h2><p class="sub">Pra não repetir.</p><div class="recs" id="dislikes"></div></div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="view" id="v-metas">
+<section class="band">
+  <div class="in">
+    <h2>Metas de longo prazo</h2>
+    <p class="sub">O que você quer construir, por que, e os passos. Ligue uma meta a um hábito e os relatórios avisam quando ela está ficando pra trás.</p>
+    <fieldset id="gfs">
+      <div class="newg"><label for="gNew" class="sr">Nova meta</label><input class="fld" id="gNew" placeholder="Nova meta. Ex.: correr 5 km sem parar"><button class="btn" id="gAdd">Criar meta</button></div>
+      <div class="goals" id="goals"></div>
+      <details style="margin-top:24px" id="doneBox"><summary id="doneSum">Concluídas</summary><div class="goals" id="goalsDone" style="margin-top:12px"></div></details>
+    </fieldset>
+  </div>
+</section>
+</div>
+
+<div class="view" id="v-memorias">
+<section class="band">
+  <div class="in">
+    <h2>Marcos do desafio</h2>
+    <p class="sub">Cada marco traz um resumo de como você chegou até ali.</p>
+    <div class="mss" id="mss" style="margin-bottom:44px"></div>
+    <h2>Neste dia</h2>
+    <p class="sub">O que você viveu uma semana, um mês e mais tempo atrás.</p>
+    <div class="mems" id="onDay"></div>
+    <h2 style="margin-top:44px">Dias marcantes</h2>
+    <p class="sub">Os dias que você marcou pra não esquecer.</p>
+    <div class="mems" id="stars"></div>
+    <h2 style="margin-top:44px">Cartas pro futuro</h2>
+    <p class="sub">Escreve pro você de daqui a uns meses. A carta fica lacrada e aparece sozinha quando chegar a hora.</p>
+    <div class="lts" id="lts"></div>
+    <details id="lwBox"><summary>Escrever uma carta</summary>
+      <div class="lw"><fieldset id="lfs">
+        <label for="lTx" class="sr">Carta</label>
+        <textarea id="lTx" placeholder="Oi, eu do futuro. Hoje eu tô..."></textarea>
+        <div role="radiogroup" aria-label="Quando abrir">
+          <label class="opt"><input type="radio" name="lwhen" value="sur" checked><span><b>Surpresa.</b> Abre num dia qualquer entre 3 e 12 meses, sem aviso.</span></label>
+          <label class="opt"><input type="radio" name="lwhen" value="end"><span><b>No último dia do desafio.</b></span></label>
+          <label class="opt"><input type="radio" name="lwhen" value="date"><span><b>Numa data que eu escolher:</b> <input type="date" id="lDate" aria-label="Data"></span></label>
+        </div>
+        <button class="btn" id="lSeal">Lacrar carta</button>
+      </fieldset></div>
+    </details>
+    <h2 style="margin-top:44px">Revisões da semana</h2>
+    <p class="sub">O que você respondeu nas revisões de domingo. <button class="btn ghost" id="revNow" style="margin-left:6px;min-height:36px;padding:4px 12px">Fazer a desta semana</button></p>
+    <div class="lts" id="revs"></div>
+    <h2 style="margin-top:44px">Galeria</h2>
+    <p class="sub" id="galSub"></p>
+    <div class="gal" id="gal"></div>
+  </div>
+</section>
+</div>
+<div class="lb" id="lb" hidden role="dialog" aria-label="Foto"><img id="lbImg" alt=""><p id="lbTx"></p><div class="row"><button class="btn" id="lbDay">Ver o dia</button><button class="btn ghost" id="lbClose">Fechar</button></div></div>
+<div class="mdl" id="mdl" hidden role="dialog" aria-modal="true"><div class="mbox"><div id="mdlBody"></div><div class="row"><button class="btn" id="mdlOk">Fechar</button></div></div></div>
+<div class="toast" id="toast"><span id="toastTx"></span><button id="undoBtn">Desfazer</button></div>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Tema" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">#6324d6</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">#ffffff</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowBackground">@color/roxo</item>
+        <item name="android:windowSplashScreenBackground">@color/roxo</item>
+        <item name="android:colorAccent">#6324d6</item>
+    </style>
+</resources>
